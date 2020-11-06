@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy import *
+def loadDataSet():
+    file = open('test.txt')
+    featureSet = []
+    resultSet = []
+    for line in file.readlines():
+        lineArray = line.strip().split(' ')
+        featureSet.append([1.0,float(lineArray[0])])
+        resultSet.append(float(lineArray[1]))
+    return featureSet,resultSet
+
+def lineRegress(featureSet,resultSet,iterNums=20):
+    dataMat = mat(featureSet)
+    m,n = shape(dataMat)
+    weights = mat(zeros((n,1)))
+    alpha = 0.0001
+    #print(dataMat * weights-resultSet)
+    for i in range(iterNums):
+        error = dataMat * weights - mat(resultSet).transpose()
+        weights = weights - alpha * dataMat.transpose() * error / m
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    xcord1=[]
+    max_X = 0.0
+    for item in featureSet:
+        xcord1.append(item[1])
+        if(item[1] > max_X):
+            max_X = item[1]
+    ycord1 = resultSet
+    ax.scatter(xcord1, ycord1, s=30, c='red', marker='s')
+    x = arange(0, max_X, 0.1)
+    # print(type(weights[0]))
+
+    y = weights[0] + weights[1] * x
+    ax.plot(x,array(y)[0])
+    plt.xlabel('area/m2')
+    plt.ylabel('price')
+    plt.show()
+    return weights
+
+
+if __name__ == '__main__':
+    featureSet,resultSet = loadDataSet()
+    print(lineRegress(featureSet,resultSet,100))
